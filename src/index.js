@@ -2,11 +2,54 @@ import express from "express";
 import { pool } from "./db.js";
 import { PORT } from "./config.js";
 
+import cloudinary from "cloudinary";
+import multer from "multer";
+
 const app = express();
 import cors from "cors";
 app.use(express.json());
 
 app.use(cors());
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+
+// Configurar Cloudinary
+cloudinary.v2.config({
+  cloud_name: "djxwusqnb",
+  api_key: "917253116411877",
+  api_secret: "jE4t56Dz7uOMlrtp3tAZLVmS2Tw",
+});
+
+// Configurar Multer
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// Ruta para cargar imágenes
+app.post("/upload", upload.array("images"), (req, res) => {
+  const files = req.files;
+
+  const uploadPromises = files.map((file) => {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.v2.uploader.upload_stream(
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+      uploadStream.end(file.buffer);
+    });
+  });
+
+  Promise.all(uploadPromises)
+    .then((results) => res.json(results))
+    .catch((error) => res.status(500).send(error));
+});
+
 // Usuarios
 app.post("/usuarios", async (req, res) => {
   try {
