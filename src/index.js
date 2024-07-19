@@ -256,10 +256,10 @@ app.get("/propiedades", async (req, res) => {
 // Imagenes
 app.post("/imagenes", async (req, res) => {
   try {
-    const { ID_Propiedad, PublicId, Asset, Url_img } = req.body;
+    const { ID_Propiedad, Url_img } = req.body;
     const [result] = await pool.query(
       "INSERT INTO Imagenes (ID_Propiedad, PublicId, Asset, Url_img) VALUES (?, ?, ?, ?)",
-      [ID_Propiedad, PublicId, Asset, Url_img]
+      [ID_Propiedad, Url_img]
     );
     res.json(result);
   } catch (error) {
