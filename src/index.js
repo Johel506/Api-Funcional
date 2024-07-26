@@ -54,6 +54,7 @@ app.post("/upload", upload.array("images"), (req, res) => {
 app.post("/usuarios", async (req, res) => {
   try {
     const {
+      ID_Usuario,
       Nombre,
       Apellidos,
       Correo,
@@ -63,8 +64,17 @@ app.post("/usuarios", async (req, res) => {
       Tipo,
     } = req.body;
     const [result] = await pool.query(
-      "INSERT INTO Usuarios (Nombre, Apellidos, Correo, Password_Usuario, Telefono, Genero, Tipo) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [Nombre, Apellidos, Correo, Password_Usuario, Telefono, Genero, Tipo]
+      "INSERT INTO Usuarios (ID_Usuario, Nombre, Apellidos, Correo, Password_Usuario, Telefono, Genero, Tipo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        ID_Usuario,
+        Nombre,
+        Apellidos,
+        Correo,
+        Password_Usuario,
+        Telefono,
+        Genero,
+        Tipo,
+      ]
     );
     res.json(result);
   } catch (error) {
@@ -258,7 +268,7 @@ app.post("/imagenes", async (req, res) => {
   try {
     const { ID_Propiedad, Url_img } = req.body;
     const [result] = await pool.query(
-      "INSERT INTO Imagenes (ID_Propiedad, PublicId, Asset, Url_img) VALUES (?, ?, ?, ?)",
+      "INSERT INTO Imagenes (ID_Propiedad, Url_img) VALUES (?, ?)",
       [ID_Propiedad, Url_img]
     );
     res.json(result);
@@ -308,7 +318,7 @@ app.get("/propiedad-servicio", async (req, res) => {
 app.get("/propiedades-principal", async (req, res) => {
   try {
     const [rows] =
-      await pool.query(`SELECT p.ID_Propiedad, p.ID_Caracteristicas, p.Nombre, p.Precio, p.ID_Ubicacion, b.Direccion,
+      await pool.query(`SELECT p.ID_Propiedad, p.ID_Caracteristicas, p.Nombre, p.Precio, p.ID_Ubicacion, b.Ciudad, b.Provincia,b.Pais,
        c.Num_Habitaciones, c.Num_Banos, c.Num_Pisos, c.Area_Lote
 FROM Propiedades p
 JOIN Caracteristicas c ON p.ID_Caracteristicas = c.ID_Caracteristicas JOIN Ubicacion b ON p.ID_Ubicacion = b.ID_Ubicacion;`);
