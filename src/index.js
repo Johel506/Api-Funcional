@@ -50,6 +50,34 @@ app.post("/upload", upload.array("images"), (req, res) => {
     .catch((error) => res.status(500).send(error));
 });
 
+
+//Login
+app.post("/login", async (req, res) => {
+  try {
+    const { Correo, Password_Usuario } = req.body;
+
+    // Buscar el usuario por correo y contraseña
+    const [rows] = await pool.query(
+      "SELECT * FROM Usuarios WHERE Correo = ? AND Password_Usuario = ?",
+      [Correo, Password_Usuario]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: "Credenciales inválidas" });
+    }
+
+    const user = rows[0];
+
+    // Eliminar la contraseña del objeto de usuario antes de enviarlo
+    delete user.Password_Usuario;
+
+    res.json({ message: "Login exitoso", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 // Usuarios
 //Agregar Usuarios
 app.post("/usuarios", async (req, res) => {
