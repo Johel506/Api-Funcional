@@ -51,6 +51,7 @@ app.post("/upload", upload.array("images"), (req, res) => {
 });
 
 // Usuarios
+//Agregar Usuarios
 app.post("/usuarios", async (req, res) => {
   try {
     const {
@@ -82,7 +83,7 @@ app.post("/usuarios", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+//Obtener Datis
 app.get("/usuarios", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM Usuarios");
@@ -90,6 +91,51 @@ app.get("/usuarios", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Eliminar usuario
+app.delete("/usuarios/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Usuarios WHERE ID_Usuario = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    res.json({ message: "Usuario eliminado con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar usuario
+app.put("/usuarios/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      Nombre,
+      Apellidos,
+      Correo,
+      Password_Usuario,
+      Telefono,
+      Genero,
+      Tipo,
+    } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Usuarios SET Nombre = ?, Apellidos = ?, Correo = ?, Password_Usuario = ?, Telefono = ?, Genero = ?, Tipo = ? WHERE ID_Usuario = ?",
+      [Nombre, Apellidos, Correo, Password_Usuario, Telefono, Genero, Tipo, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    res.json({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -133,6 +179,51 @@ app.get("/ubicaciones", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Eliminar ubicación
+app.delete("/ubicaciones/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Ubicacion WHERE ID_Ubicacion = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Ubicación no encontrada" });
+    }
+    res.json({ message: "Ubicación eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar ubicación
+app.put("/ubicaciones/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      Direccion,
+      Ciudad,
+      Provincia,
+      Pais,
+      CodigoPostal,
+      Latitud,
+      Longitud,
+    } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Ubicacion SET Direccion = ?, Ciudad = ?, Provincia = ?, Pais = ?, CodigoPostal = ?, Latitud = ?, Longitud = ? WHERE ID_Ubicacion = ?",
+      [Direccion, Ciudad, Provincia, Pais, CodigoPostal, Latitud, Longitud, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Ubicación no encontrada" });
+    }
+    res.json({ message: "Ubicación actualizada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -184,6 +275,49 @@ app.get("/caracteristicas", async (req, res) => {
   }
 });
 
+// Eliminar característica
+app.delete("/caracteristicas/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Caracteristicas WHERE ID_Caracteristicas = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Característica no encontrada" });
+    }
+    res.json({ message: "Característica eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar característica
+app.put("/caracteristicas/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      Num_Habitaciones,
+      Num_Banos,
+      Num_Pisos,
+      Area_Lote,
+      Area_Casa,
+    } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Caracteristicas SET Num_Habitaciones = ?, Num_Banos = ?, Num_Pisos = ?, Area_Lote = ?, Area_Casa = ? WHERE ID_Caracteristicas = ?",
+      [Num_Habitaciones, Num_Banos, Num_Pisos, Area_Lote, Area_Casa, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Característica no encontrada" });
+    }
+    res.json({ message: "Característica actualizada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 // Servicios
 app.post("/servicios", async (req, res) => {
   try {
@@ -209,6 +343,44 @@ app.get("/servicios", async (req, res) => {
   }
 });
 
+// Eliminar servicio
+app.delete("/servicios/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Servicios WHERE ID_Servicio = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Servicio no encontrado" });
+    }
+    res.json({ message: "Servicio eliminado con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar servicio
+app.put("/servicios/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Nombre, Svg_Imagen } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Servicios SET Nombre = ?, Svg_Imagen = ? WHERE ID_Servicio = ?",
+      [Nombre, Svg_Imagen, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Servicio no encontrado" });
+    }
+    res.json({ message: "Servicio actualizado con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+//Propiedades
 app.post("/propiedades", async (req, res) => {
   try {
     const {
@@ -263,6 +435,51 @@ app.get("/propiedades", async (req, res) => {
   }
 });
 
+
+// Eliminar propiedad
+app.delete("/propiedades/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Propiedades WHERE ID_Propiedad = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Propiedad no encontrada" });
+    }
+    res.json({ message: "Propiedad eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar propiedad
+app.put("/propiedades/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      ID_Vendedor,
+      ID_Caracteristicas,
+      Nombre,
+      Descripcion,
+      Precio,
+      ID_Ubicacion,
+    } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Propiedades SET ID_Vendedor = ?, ID_Caracteristicas = ?, Nombre = ?, Descripcion = ?, Precio = ?, ID_Ubicacion = ? WHERE ID_Propiedad = ?",
+      [ID_Vendedor, ID_Caracteristicas, Nombre, Descripcion, Precio, ID_Ubicacion, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Propiedad no encontrada" });
+    }
+    res.json({ message: "Propiedad actualizada con éxito", id, ...req.body });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 // Imagenes
 app.post("/imagenes", async (req, res) => {
   try {
@@ -287,6 +504,43 @@ app.get("/imagenes", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Eliminar imagen
+app.delete("/imagenes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM Imagenes WHERE ID_Imagen = ?",
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Imagen no encontrada" });
+    }
+    res.json({ message: "Imagen eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Editar imagen
+app.put("/imagenes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ID_Propiedad, Url_img } = req.body;
+    const [result] = await pool.query(
+      "UPDATE Imagenes SET ID_Propiedad = ?, Url_img = ? WHERE ID_Imagen = ?",
+      [ID_Propiedad, Url_img, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Imagen no encontrada" });
+    }
+    res.json({ message: "Imagen actualizada con éxito", id, ...req.body });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
